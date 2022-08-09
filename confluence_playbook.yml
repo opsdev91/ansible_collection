@@ -1,0 +1,64 @@
+---
+
+- hosts: localhost
+  connection: local
+  vars:
+    - proxmox_creation: false
+  roles:
+    - { role: proxmox, when: proxmox_creation == 'true' }
+
+- hosts: localhost
+  connection: local 
+  tasks:
+    - name: Clean postgres_hosts
+      ansible.builtin.known_hosts:
+        state: absent
+        name: "{{ hostvars[item].ansible_host if hostvars[item].ansible_host is defined else item }}"
+      with_items: "{{ groups['postgres_hosts'] }}"
+      ignore_errors: true
+
+    - name: Clean confluence_hosts
+      ansible.builtin.known_hosts:
+        state: absent
+        name: "{{ hostvars[item].ansible_host if hostvars[item].ansible_host is defined else item }}"
+      with_items: "{{ groups['confluence_hosts'] }}"
+      ignore_errors: true
+
+    - name: Clean proxmox_hosts
+      ansible.builtin.known_hosts:
+        state: absent
+        name: "{{ hostvars[item].ansible_host if hostvars[item].ansible_host is defined else item }}"
+      with_items: "{{ groups['proxmox_hosts'] }}"
+      ignore_errors: true
+
+    - name: verify pip3
+      command: which pip3
+      register: pip3_validation
+      ignore_errors: true
+
+    - name: download pip3
+      command: curl -O https://bootstrap.pypa.io/get-pip.py
+      when: pip3_validation.failed|bool == true
+      ignore_errors: true
+
+    - name: install pip3
+      command: python3 get-pip.py
+      when: pip3_validation.failed|bool == true
+      ignore_errors: true
+
+    - name: Install jmespath python package
+      command: python3 -m pip install jmespath
+
+
+- hosts: postgres_hosts:proxmox_hosts
+  gather_facts: true
+  become: yes
+  roles:
+    - postgres
+
+- hosts: confluence_hosts:proxmox_hosts
+  gather_facts: true
+  become: yes
+  roles:
+    - confluence
+

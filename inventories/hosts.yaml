@@ -1,0 +1,17 @@
+jira_hosts:
+  hosts:
+    ansible:
+      ansible_host: 192.168.3.26
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_pass: 12345678
+    ansible_python_interpreter: /usr/bin/python3
+
+postgres_hosts:
+  hosts:
+    ansible:
+      ansible_host: 192.168.3.26
+  vars:
+    ansible_user: ubuntu
+    ansible_ssh_pass: 12345678
+    ansible_python_interpreter: /usr/bin/python3

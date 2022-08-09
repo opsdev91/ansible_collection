@@ -1,0 +1,10 @@
+---
+# Proxmox configuration
+proxmox_hostname: ansibletest
+
+proxmox_storage: local-zfs
+
+proxmox_core: 2
+
+proxmox_memory: 4096
+

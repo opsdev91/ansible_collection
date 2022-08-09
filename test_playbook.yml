@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+      - jira_scheme: https
+      - jira_domain: wiki-dev.aandd.io
+      - jira_issue_key: AP-20
+      - jira_transition_id: 11
+  tasks:
+      - include_role:
+            name: common
+            tasks_from: jira_transition
